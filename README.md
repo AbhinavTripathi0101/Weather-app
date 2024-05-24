@@ -1,4 +1,4 @@
-Weather App
+**Weather App**
 Introduction-
 Welcome to our Weather App! This application provides real-time weather details including temperature, wind speed, and humidity. Designed with a user-friendly interface, our app ensures you stay updated with the latest weather information for any location around the globe. Built using HTML, CSS, and JavaScript, this app fetches data from the OpenWeatherMap API, ensuring accurate and up-to-date weather reports.
 
