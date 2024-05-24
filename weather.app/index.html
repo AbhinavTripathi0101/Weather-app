@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App - Easy Tutorials</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+    <div class="search">
+        <input type="text" placeholder="Enter city name" spellcheck="false">
+        <button><img src="images/search.png"></button>
+    </div>
+    <div class="weather">
+        <img src="images/rain.png" class="weather-icon">
+        <h1 class="temp">22°c</h1>
+        <h2 class="city">New York</h2>
+        <div class="details">
+            <div class="col">
+                <img src="images/humidity.png">
+                <div>
+                    <p class="humidity">50%</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="col">
+                <img src="images/wind.png">
+                <div>
+                    <p class="wind">15 km/h</p>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="error">
+        <p>Invalid city name</p>
+    </div>
+</div>
+
+<script>
+    const apiKey = "e1a7b1163c7935c90ce6de6208e67198";
+    const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+    const searchBox = document.querySelector(".search input"); 
+    const searchBtn = document.querySelector(".search button"); 
+    const weatherIcon = document.querySelector(".weather-icon");
+    const errorDiv = document.querySelector(".error");
+
+    // Hide error message initially
+    errorDiv.style.display = "none";
+
+    async function checkWeather(city) {
+        try {
+            const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`);
+            const data = await response.json();
+
+            if (response.status !== 200) {
+                throw new Error(data.message);
+            }
+
+            console.log(data); // For debugging purposes
+
+            // Ensure 'main' property exists in the response
+            if (data.main) {
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+
+                // Change the weather icon based on the weather conditions
+                if (data.weather && data.weather.length > 0) {
+                    const weatherCondition = data.weather[0].main;
+                    if (weatherCondition == "Clouds") {
+                        weatherIcon.src = "images/clouds.png";
+                    } else if (weatherCondition == "Clear") {
+                        weatherIcon.src = "images/clear.png";
+                    } else if (weatherCondition == "Rain") {
+                        weatherIcon.src = "images/rain.png";
+                    } else if (weatherCondition == "Drizzle") {
+                        weatherIcon.src = "images/drizzle.png";
+                    } else if (weatherCondition == "Mist") {
+                        weatherIcon.src = "images/mist.png";
+                    } else {
+                        weatherIcon.src = "images/default.png"; // Fallback image for unknown weather conditions
+                    }
+                }
+
+                // Hide error message on successful fetch
+                errorDiv.style.display = "none";
+            } else {
+                console.error('Weather data not found for this city');
+                errorDiv.style.display = "block";
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+            errorDiv.style.display = "block";
+        }
+    }
+
+    searchBtn.addEventListener("click", () => {
+        const city = searchBox.value;
+        if (city) {
+            checkWeather(city);
+        } else {
+            alert("Please enter a city name");
+        }
+    });
+</script>
+
+</body>
+</html>
